@@ -609,6 +609,18 @@ SALES_DATA AS (
         SDX.SOI_DELIVERED_36_8_D,
 		SDX.L7D_NR_CUSTOMER_RATINGS,
 		SDX.L28D_NR_CUSTOMER_RATINGS,
+		CASE WHEN SDX.QTD_ORDERS_SPEED_0_15_D < ISNULL(OVERRIDE_CANCELED_ITEMS.CANCELLED_15D,0) THEN 0 ELSE SDX.QTD_ORDERS_SPEED_0_15_D - ISNULL(OVERRIDE_CANCELED_ITEMS.CANCELLED_15D,0) AS QTD_ORDERS_SPEED_0_15_D,
+		SDX.QTD_ORDERS_SPEED_1_15_D,
+		SDX.QTD_ORDERS_SPEED_2_15_D,
+		SDX.QTD_ORDERS_SPEED_3_15_D,
+		SDX.QTD_ORDERS_SPEED_4_15_D,
+		SDX.QTD_ORDERS_SPEED_5_15_D,
+		CASE WHEN SDX.QTD_ORDERS_SPEED_0_36_D < ISNULL(OVERRIDE_CANCELED_ITEMS.CANCELLED_36D,0) THEN 0 ELSE SDX.QTD_ORDERS_SPEED_0_36_D - ISNULL(OVERRIDE_CANCELED_ITEMS.CANCELLED_36D,0) END) AS QTD_ORDERS_SPEED_0_36_D, 
+		SDX.QTD_ORDERS_SPEED_1_36_D,
+		SDX.QTD_ORDERS_SPEED_2_36_D,
+		SDX.QTD_ORDERS_SPEED_3_36_D,
+		SDX.QTD_ORDERS_SPEED_4_36_D,
+		SDX.QTD_ORDERS_SPEED_5_36_D,
 		--
 		-- The average seller drop off speed is calculated like: Score Sum / Total drop off orders after override.
 		CASE WHEN (
@@ -715,14 +727,25 @@ SALES_DATA AS (
 																						SD.SOI_RETURNED_36D,
 																							SD.SOI_DELIVERED_36_8_D,
 																								SD.L28D_NR_CUSTOMER_RATINGS,
-																									SD.L7D_NR_CUSTOMER_RATINGS,					
-																									--
-																									SD.L7D_DROP_OFF_SPEED_RATE,
-																									SD.L28D_DROP_OFF_SPEED_RATE,
-																									CASE WHEN SD.L7D_DROP_OFF_SPEED_RATE IS NULL AND SD.L28D_DROP_OFF_SPEED_RATE IS NOT NULL THEN 
-																												ISNULL(@l7d_dos * SD.L7D_DROP_OFF_SPEED_RATE, 0) + @l28d_dos * SD.L28D_DROP_OFF_SPEED_RATE
-																										 ELSE @l7d_dos * SD.L7D_DROP_OFF_SPEED_RATE + @l28d_dos * SD.L28D_DROP_OFF_SPEED_RATE 
-																									END AS DROP_OFF_SPEED_RATE_AVG
+																									SD.L7D_NR_CUSTOMER_RATINGS,
+																										SD.QTD_ORDERS_SPEED_0_15_D,
+																											SD.QTD_ORDERS_SPEED_1_15_D,
+																												SD.QTD_ORDERS_SPEED_2_15_D,
+																													SD.QTD_ORDERS_SPEED_3_15_D,
+																														SD.QTD_ORDERS_SPEED_4_15_D,
+																															SD.QTD_ORDERS_SPEED_5_15_D,
+																																SD.QTD_ORDERS_SPEED_0_36_D, 
+																																	SD.QTD_ORDERS_SPEED_1_36_D,
+																																		SD.QTD_ORDERS_SPEED_2_36_D,
+																																			SD.QTD_ORDERS_SPEED_3_36_D,
+																																				SD.QTD_ORDERS_SPEED_4_36_D,
+																																					SD.QTD_ORDERS_SPEED_5_36_D,				
+																																						SD.L7D_DROP_OFF_SPEED_RATE,
+																																							SD.L28D_DROP_OFF_SPEED_RATE,
+																																								CASE WHEN SD.L7D_DROP_OFF_SPEED_RATE IS NULL AND SD.L28D_DROP_OFF_SPEED_RATE IS NOT NULL THEN 
+																																								ISNULL(@l7d_dos * SD.L7D_DROP_OFF_SPEED_RATE, 0) + @l28d_dos * SD.L28D_DROP_OFF_SPEED_RATE
+																																								ELSE @l7d_dos * SD.L7D_DROP_OFF_SPEED_RATE + @l28d_dos * SD.L28D_DROP_OFF_SPEED_RATE 
+																																								END AS DROP_OFF_SPEED_RATE_AVG
 
 
 	FROM SALES_DATA SD
